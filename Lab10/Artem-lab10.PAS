@@ -317,4 +317,4 @@ Begin
   deleteTree(root);
   close(output);
 End.
-66
+{ХУЙ } 
