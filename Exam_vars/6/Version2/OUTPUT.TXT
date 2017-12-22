@@ -1,0 +1,20 @@
+List zav
+moloko    5
+a         1
+b         2
+c         0
+
+List base
+moloko    10
+a         1
+b         1
+c         5
+RESULT:
+List zav
+b         1
+
+List base
+moloko    5
+a         0
+b         0
+c         5
