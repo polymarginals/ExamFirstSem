@@ -27,7 +27,7 @@ begin
             break;
           end
         else begin
-          if (tmp^.x < search^.next^.x) or ((tmp^.x = search^.next^.x) and (tmp^.y < search^.next^.y)) then
+          if (search^.next <> nil) and (tmp^.x < search^.next^.x) or ((tmp^.x = search^.next^.x) and (tmp^.y < search^.next^.y)) then
             begin
               tmp^.next:=search^.next;
               search^.next:=tmp;
