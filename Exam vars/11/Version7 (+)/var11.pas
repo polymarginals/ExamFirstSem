@@ -20,7 +20,7 @@ type
         prev  : PTStack;
     end;
 
-procedure Tree_CreateFromFile(var f: Text; var root: PTBSTree);
+procedure Tree_CreateFromFile(var fout: Text; var fin: Text; var root: PTBSTree);
 var
     tmpRoot     : PTBSTree;
     lastRoot    : PTBSTree;
@@ -31,7 +31,8 @@ var
 begin
     New(tmpRoot);
 
-    Readln(f, tmpString);
+    Readln(fin, tmpString);
+    WriteLn(fout, tmpString);
     i := 1;
     while (tmpString[i] <> ',') do
         inc(i);
@@ -43,20 +44,22 @@ begin
     tmpRoot^.left := nil;
     tmpRoot^.right := nil;
 
-    while not Eof(f) do
+    while not Eof(fin) do
     begin
         tmpRoot := root;
+
         New(value);
-        Readln(f, tmpString);
+        Readln(fin, tmpString);
+        WriteLn(fout, tmpString);
         i := 1;
-        while (tmpString[i] <> ',') do
-            inc(i);
+        while (tmpString[i] <> ',') do inc(i);
         Val(Copy(tmpString, i + 2, Length(tmpString)), value^.age, err);
         value^.count := 1;
 
         while (tmpRoot <> nil) do
         begin
             lastRoot := tmpRoot;
+
             if (tmpRoot^.data^.age = value^.age) then
             begin
                 break;
@@ -91,11 +94,10 @@ begin
     end;
 end;
 
-procedure Stack_Init(var top: PTStack; element: PTBSTree);
+procedure Stack_Init(var top: PTStack);
 begin
     New(top);
-    top^.data := element;
-    top^.prev := nil;
+    top := nil;
 end;
 
 procedure Stack_Push(var top: PTStack; element: PTBSTree);
@@ -115,12 +117,12 @@ var
     element  : PTBSTree;
 
 begin
-    element := top^.data;
-    tmpStack := top;
-    top := top^.prev;
-    dispose(tmpStack);
+    element     := top^.data;
+    tmpStack    := top      ;
+    top         := top^.prev;
+    Dispose(tmpStack)       ;
 
-    Stack_Pop := element;
+    Stack_Pop   := element  ;
 end;
 
 function Stack_Top(top: PTStack): PTBSTree;
@@ -128,16 +130,15 @@ begin
     Stack_Top := top^.data;
 end;
 
-{ traversing tree by inorder right-to-left rule }
-procedure Tree_InorderTraversalRecursively(var f: Text; root: PTBSTree);
+procedure Stack_Print(var stack: PTStack);
+var
+    tmpElement : PTBSTree;
 begin
-    if (root = nil) then { reached end of tree }
-        exit;
-
-    Tree_InorderTraversalRecursively(f, root^.right); { right subtree first }
-    Stack_Push(stack, root);
-    WriteLn(f, 'Возраст: ', root^.data^.age, '. Количество - ', root^.data^.count); { when right subtree is out printing current root }
-    Tree_InorderTraversalRecursively(f, root^.left); { finally traversing and printing current root' left subtree }
+    while (stack <> nil) do
+    begin
+        tmpElement := Stack_Pop(stack);
+        WriteLn(tmpElement^.data^.age, ' ', tmpElement^.data^.count);
+    end;
 end;
 
 function Tree_IterativeInorderTraversal(var f: Text; var root: PTBSTree; limitAge: Integer): Integer;
@@ -148,25 +149,22 @@ var
 
 begin
     tmpRoot := root;
-    Stack_Init(stack, tmpRoot);
+    Stack_Init(stack);
     count   := 0;
-    WriteLn(f, 'Итеративный:');
 
-    while ((Stack_Top(stack) <> nil) or (tmpRoot <> nil)) do
+    while ((stack <> nil) or (tmpRoot <> nil)) do
     begin
         if (tmpRoot <> nil) then
         begin
             Stack_Push(stack, tmpRoot);
             tmpRoot := tmpRoot^.left;
-            WriteLn(f, 'Push: ', Stack_Top(stack)^.data^.age);
         end
         else
         begin
             tmpRoot := Stack_Pop(stack);
-            WriteLn(f, 'After Pop: ', Stack_Top(stack)^.data^.age);
             if (tmpRoot^.data^.age < limitAge) then
-                inc(count);
-            WriteLn(f, 'Возраст: ', tmpRoot^.data^.age, '. Количество - ', tmpRoot^.data^.count);
+                count := count + tmpRoot^.data^.count;
+            WriteLn(f, 'Age: ', tmpRoot^.data^.age, '. Count - ', tmpRoot^.data^.count);
             tmpRoot := tmpRoot^.right;
         end;
     end;
@@ -180,6 +178,7 @@ var
     count : Integer;
     inp   : Text;
     outp  : Text;
+    limit : Integer;
 
 begin
     Assign(inp, 'input.dat');
@@ -187,12 +186,13 @@ begin
     Assign(outp, 'output.dat');
     Rewrite(outp);
 
-    Tree_CreateFromFile(inp, tree);
-    Stack_Init(stack, tree);
-    Tree_InorderTraversalRecursively(outp, tree);
-    count := Tree_IterativeInorderTraversal(outp, tree, 20);
+    Tree_CreateFromFile(outp, inp, tree);
+    Stack_Init(stack);
+    WriteLn('Please, enter desired age: ');
+    ReadLn(limit);
+    count := Tree_IterativeInorderTraversal(outp, tree, limit);
 
-    WriteLn(outp, 'Людей с возрастом меньше 20: ', count);
+    WriteLn(outp, 'People who are younger than ', limit, ': ', count);
 
     Close(inp);
     Close(outp);
