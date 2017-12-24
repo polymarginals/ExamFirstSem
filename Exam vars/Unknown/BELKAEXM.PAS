@@ -1,19 +1,18 @@
 Program belkaexamen;
 
 type
-
-ptwin=^twin;
-pone=^one;
-twin= record
-      K:integer;
-      fam:string[15];
-      n,p:ptwin;
-      end;
-one= record
-     K:integer;
-     fam:string[15];
-     n:pone;
-     end;
+    ptwin=^twin;
+    pone=^one;
+    twin= record
+          K:integer;
+          fam:string[15];
+          n,p:ptwin;
+          end;
+    one= record
+         K:integer;
+         fam:string[15];
+         n:pone;
+         end;
 
 function minstring(s1,s2:string):boolean;
 var i,k:integer;
@@ -29,10 +28,6 @@ for i:=1 to 15 do
     end;
   end;
 end;
-
-
-
-
 
 procedure P1(var S:ptwin;H:string);
 var
@@ -63,16 +58,10 @@ while not(eof(vvod)) do
 close(vvod);
 end;
 
-
-
-
-
-
-
 var
-D:ptwin;
-S1,S2:pone;
+    D:ptwin;
+    S1,S2:pone;
 
 Begin
-P1(D,'in.xxx');
+    P1(D,'in.xxx');
 end.
