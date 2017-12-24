@@ -21,9 +21,9 @@ before: a;
 i,j: integer;
 str: string;
 begin
-assign(f,'vhod.inp');
+assign(f,'vhod.txt');
 reset(f);
-{Создаем первый и последний элементы пустыми}
+{}
 new(ukzv);
 ukzv^.pred:=nil;
 head:=ukzv;
@@ -31,47 +31,42 @@ before:=ukzv;
 new(ukzv^.sled);
 ukzv:=ukzv^.sled;
 ukzv^.sled:=nil;
-{Начинаем читать данные из списка}
+{}
 while not eof(f) do begin
-readln(f,str); {Читаем одну запись как строку}
+readln(f,str); {}
 new(this);
 i:=1;
 this^.num:=0;
-while str[i] <> ' ' do begin {Здесь идет перевод в число из строки}
+while str[i] <> ' ' do begin {}
 this^.num:=this^.num*10+ord(str[i])-48;
 i:=i+1;
 end;
-i:=i+1; {Переходим к автору}
+i:=i+1; {}
 j:=i;
-while str[j]<>' ' do {Находим место, где автор кончается}
+while str[j]<>' ' do {}
 j:=j+1;
-this^.author:=copy(str,i,j-i); {Копируем диапазон символов в поле списка}
-i:=j+1; {Переходим к названию и повторяем вышеуказанное, как с автором}
-j:=i;
-while str[j]<>' ' do
-j:=j+1;
-this^.name:=copy(str,i,j-i); {Тут тоже копирование}
-i:=j+1; {Переход на чтение года}
+this^.author:=copy(str,i,j-i); {}
+i:=j+1; {}
 j:=i;
 while str[j]<>' ' do
 j:=j+1;
-this^.year:=copy(str,i,j-i); {Тоже копирование}
+this^.name:=copy(str,i,j-i); {}
+i:=j+1; {}
+j:=i;
+while str[j]<>' ' do
+j:=j+1;
+this^.year:=copy(str,i,j-i); {}
 i:=j+1;
-this^.cost:=copy(str,i,length(str)-i+1); {Копируем оставшиеся символы в поле цены}
+this^.cost:=copy(str,i,length(str)-i+1);
 
-{Ищем место для вставки новой записи. Поиск идет до последнего непустого
-элемента, и если нашли такой элемент, что следующий за ним по номеру
-больше нового, то останавливаемся.}
 ukzv:=head;
 while (ukzv^.sled^.sled<>nil) and (ukzv^.sled^.num < this^.num) do
 ukzv:=ukzv^.sled;
-{Просто переносим два указателя. Текущий указывает теперь следом на новый,
-а новый следом указывает на остаток списка}
+
 this^.sled:=ukzv^.sled;
 ukzv^.sled:=this;
 end;
 
-{Проставим указатели на обратный порядок и запомним последний пустой}
 ukzv:=head^.sled;
 before:=head;
 while ukzv<>nil do begin
@@ -83,17 +78,15 @@ ass:=before;
 close(f);
 end;
 
-{Процедура вставки новой записи. Имеет тот же алгоритм, что и при
-формировании списка, когда вставляли по поиску места новый элемент}
 procedure newelem(var head:a);
 var
 mem,ukzv: a;
 i,j: integer;
 str: string;
 begin
-writeln('Введите новые данные: (Пробелы в названии разделяйте знаком _ )');
+writeln('Number Avtor Name Year Cost');
 readln(str);
-{Создаем ячейку в памяти компа и читаем аналогично чтению выше}
+
 new(mem);
 i:=1;
 mem^.num:=0;
@@ -119,11 +112,10 @@ mem^.year:=copy(str,i,j-i);
 i:=j+1;
 mem^.cost:=copy(str,i,length(str)-i+1);
 
-{Проводим поиск места для вставки нового элемента, прям как в процедуре выше}
 ukzv:=head;
 while (ukzv^.sled^.sled<>nil) and (ukzv^.sled^.num < mem^.num) do
 ukzv:=ukzv^.sled;
-{Меняем так же местами, но добавляя переназначение указателей на предыдущ.}
+
 mem^.sled:=ukzv^.sled;
 mem^.pred:=ukzv;
 ukzv^.sled:=mem;
@@ -138,47 +130,46 @@ i: integer;
 avtor,nazv: string;
 f: text;
 begin
-assign(f,'out.out');
+assign(f,'out.txt');
 append(f);
-writeln('Поиск начинается...');
-write('Введите название книги: ');
+writeln('Search by Nazv and Avtor');
+write('Nazv: ');
 readln(nazv);
-write('Введите автора книги: ');
+write('Avtor: ');
 readln(avtor);
 i:=1;
-{Если Первая буква Автора от А до К, то поиск идет слева}
 if avtor[1] <= 'K' then begin
 ukzv:=head^.sled;
 while ukzv^.sled <> nil do begin
-{Если нашли - нижу действия. Выписываем в файл данные}
+
 if (ukzv^.author = avtor) and (ukzv^.name = nazv) then begin
-writeln('Ваша книга найдена. Она ',i,' слева в списке');
-writeln(f,'Вы искали и нашли книгу - ',ukzv^.name);
-write(f,'Цена - ',ukzv^.cost,'rub');
-writeln(f,'Год издания - ',ukzv^.year);
+write(f,'Number ',i,' ');
+write(f,'Name - ',ukzv^.name,' ');
+write(f,'Cost  - ',ukzv^.cost,' ');
+writeln(f,'Year - ',ukzv^.year);
 i:=0;
-break; end; {И кончаем цикл поиска}
+break; end;
 i:=i+1;
 ukzv:=ukzv^.sled;
 end;
-{Если не нашли, то выведем сообщение}
-if i<>0 then writeln(f,'Такой книги нет');
+
+if i<>0 then writeln(f,'Net Takogo?');
 end;
-{Если автор с L-Z, то поиск справа аналогично}
+
 if avtor[1] > 'K' then begin
 ukzv:=ass^.pred;
 while ukzv^.pred <> nil do begin
 if (ukzv^.author = avtor) and (ukzv^.name = nazv) then begin
-writeln('Ваша книга найдена. Она ',i,' справа в списке');
-writeln(f,'Вы искали и нашли книгу - ',ukzv^.name);
-write(f,'Цена - ',ukzv^.cost,'rub ');
-writeln(f,'Год издания - ',ukzv^.year);
+write(f,'Number ',i,' ');
+write(f,'Name - ',ukzv^.name,' ');
+write(f,'Cost  - ',ukzv^.cost,' ');
+writeln(f,'Year - ',ukzv^.year);
 i:=0;
 break; end;
 i:=i+1;
 ukzv:=ukzv^.pred;
 end;
-if i<>0 then writeln(f,'Такой книги нет');
+if i<>0 then writeln(f,'Net Takogo?');
 end;
 writeln('Done');
 writeln(f,' ');
@@ -192,16 +183,17 @@ ukzv: a;
 co: string;
 f: text;
 begin
-assign(f,'out.out');
+assign(f,'out.txt');
 append(f);
 writeln(f,'Data:');
-1: writeln('Куда выводим? right or left?');
+writeln('right or left?');
 readln(co);
-if (co <> 'right') and (co <> 'left') then begin
-writeln('Ошибка');
-goto 1;
+while (co <> 'right') and (co <> 'left') do begin
+writeln('Error');
+writeln('right or left?');
+readln(co);
 end;
-{Вывод вправо. Идем с головы}
+
 if co = 'right' then begin
 ukzv:=head^.sled;
 while ukzv^.sled <> nil do begin
@@ -212,7 +204,7 @@ ukzv:=ukzv^.sled;
 end;
 writeln('Done');
 end;
-{Вывод влево - идем с конца}
+
 if co = 'left' then begin
 ukzv:=ass^.pred;
 while ukzv^.pred <> nil do begin
@@ -235,11 +227,11 @@ f1: text;
 
 begin
 clrscr;
-assign(f1,'out.out');
+assign(f1,'out.txt');
 rewrite(f1);
 close(f1);
 form(ukstr,last);
-writeln('Список книг создан');
+writeln('Vivod:');
 vivod(ukstr,last);
 newelem(ukstr);
 vivod(ukstr,last);
