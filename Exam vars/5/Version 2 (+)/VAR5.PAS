@@ -1,172 +1,178 @@
+program var5;
+
 type
-ptrDL = ^ItemDL; {type DoubleLinked list}
-  ItemDL = record {item of DoubleLinked list}
-    number     : integer; {number}
-    name       : string; {Name}
-    next, prev : ptrDL
-  end;
+    DoubleLinkedList        = ^TDoubleLinkedListItem;
+    TDoubleLinkedListItem   = record
+        Number      : Integer         ;
+        Name        : String          ;
+        Next        : DoubleLinkedList;
+        Prev        : DoubleLinkedList; { pointer to previous list element }
+    end;
 
-ptrSL =^ ItemSL;
-  ItemSL = record
-    number     :integer;
-    name       : string;
-    next       : ptrSL;
-  end;
-
-var
-headDL                : ptrDL; {pointer to head of Double List}
-headName, headNumber  : ptrSL; {pointer to heads of single Lists sorted by Name and Number}
-input, output         : text;
+    SingleLinkedList        = ^TSingleLinkedListItem;
+    TSingleLinkedListItem   = record
+        Number      : Integer         ;
+        Name        : String          ;
+        Next        : SingleLinkedList;
+    end;
 
 {Initialization and creation of double list from input text file}
-procedure P1(var headDL : ptrDL; var input: text);
+procedure P1(var headDL: DoubleLinkedList; var input: Text);
 var
-  currDL : ptrDL;
+  currDL : DoubleLinkedList;
+
 begin
-  new(headDL);
-  headDL^.prev := nil;
-  readLn(input, headDL^.number, headDL^.name);
-  currDL := headDL;
+    New(headDL);
+    headDL^.Prev  := nil;
+    readLn(input, headDL^.Number, headDL^.Name);
+    currDL        := headDL;
 
-  while not eof(input) do
-  begin
-    new (currDL^.next);
-    currDL^.next^.prev := currDL;
-    currDL := currDL^.next;
-    readLn(input, currDL^.number, currDL^.name);
-  end;
+    while not eof(input) do
+    begin
+        New (currDL^.Next);
+        currDL^.Next^.Prev := currDL;
+        currDL := currDL^.Next;
+        ReadLn(input, currDL^.Number, currDL^.Name);
+    end;
 
-  currDL^.next := nil;
+    currDL^.Next := nil;
 end;
 
 
-{write double list in text file}
-procedure P2(headDL : ptrDL; direction: boolean; var output: text);
+{ write double linked list in text file }
+procedure P2(headDL: DoubleLinkedList; direction: Boolean; var output: Text);
 begin
-  {If inverse writing order needed then go to the end of List}
-  if not (direction) then
-    while headDL^.next <> nil do
-      headDL := headDL^.next;
+  { if inverse writing order is needed then go to the end of the List }
+    if not (direction) then
+        while headDL^.Next <> nil do
+            headDL := headDL^.Next;
 
-  while (direction and (headDL <> nil)) or (not(direction) and (headDL <> nil))  do
-  begin
-    writeLn(output, headDL^.number, ' ', headDL^.name);
-
-    {Move head pointer due to direction value}
-    if direction then
+    while (direction and (headDL <> nil)) or (not(direction) and (headDL <> nil))  do
     begin
-      headDL := headDL^.next;
-    end
-    else begin
-      headDL := headDL^.prev;
-    end;
-  end;
+        writeLn(output, headDL^.Number, ' ', headDL^.Name);
 
-  writeLn(output);
+        { Move head pointer due to direction value }
+        if direction then
+        begin
+            headDL := headDL^.Next;
+        end
+        else begin
+            headDL := headDL^.Prev;
+        end;
+    end;
+
+    WriteLn(output);
 end;
 
 
 {Initialization and creation of two single Lists}
 {SINGLE LIST have EMPTY HEAD}
-procedure P3(headDL : ptrDL; var headName : ptrSL; var headNumber : ptrSL);
+procedure P3(headDL: DoubleLinkedList; var headName: SingleLinkedList; var headNumber: SingleLinkedList);
 var
-  currSL  : ptrSL; {Single List traversal for sorting}
-  currDL  : ptrDL; {Double List traversal}
-  tmpSL   : ptrSL; {Temporary pointer for creation of single List}
+  currSL : SingleLinkedList; { Single List traversal for sorting }
+  currDL : DoubleLinkedList; { Double List traversal }
+  tmpSL  : SingleLinkedList; { Temporary pointer for creation of single List }
+
 begin
-  new(headName);
-  headName^.next := nil;
+    new(headName);
+    headName^.Next := nil;
 
-  new(headNumber);
-  headNumber^.next:= nil;
+    new(headNumber);
+    headNumber^.Next:= nil;
 
-  currDL := headDL;
+    currDL := headDL;
 
-  {Double List traversal cycle for sorting by number}
-  while currDL <> nil do
-  begin
-    currSL := headNumber; {Single List traversal cycle}
-
-    {Search insert space for single Leist}
-    while currSL <> nil do
+    {Double List traversal cycle for sorting by Number}
+    while currDL <> nil do
     begin
-      if (currSL^.next^.number > currDL^.number) or {If insertation space found}
-         (currSL^.next = nil) then {or if end of list}
-      begin
-      {creation of element}
-        new(tmpSL);
-        tmpSL^.next := currSL^.next; {creation of connections }
-        currSL^.next := tmpSL;
+        currSL := headNumber; {Single List traversal cycle}
 
-        tmpSL^.number := currDL^.number;
-        tmpSL^.name := currDL^.name;
-        break; {move to next element of Double List}
-      end;
+        {Search insert space for single Leist}
+        while currSL <> nil do
+        begin
+            if  (currSL^.Next^.Number > currDL^.Number) OR {If insertation space found}
+                (currSL^.Next = nil) then {or if end of list}
+            begin
+                {creation of element}
+                new(tmpSL);
+                tmpSL^.Next := currSL^.Next; {creation of connections }
+                currSL^.Next := tmpSL;
 
-      currSL := currSL^.next;
+                tmpSL^.Number := currDL^.Number;
+                tmpSL^.Name := currDL^.Name;
+                break; {move to Next element of Double List}
+            end;
+
+            currSL := currSL^.Next;
+        end;
+
+        currDL := currDL^.Next;
     end;
 
-    currDL := currDL^.next;
-  end;
+    currDL := headDL;
 
-  currDL := headDL;
-
-  while currDL <> nil do
-  begin
-    currSL := headName; {Single List traversal cycle}
-
-    {Search insert space for single Leist}
-    while currSL <> nil do
+    while currDL <> nil do
     begin
-      if (currSL^.next^.name > currDL^.name) or {If insertation space found}
-          (currSL^.next = nil) then {or if end of list}
-      begin
-      {creation of element}
-        new(tmpSL);
-        tmpSL^.next := currSL^.next; {creation of connections }
-        currSL^.next := tmpSL;
+        currSL := headName; {Single List traversal cycle}
 
-        tmpSL^.number := currDL^.number;
-        tmpSL^.name := currDL^.name;
-        break; {move to next element of Double List}
-      end;
+        {Search insert space for single Leist}
+        while currSL <> nil do
+        begin
+            if  (currSL^.Next^.Name > currDL^.Name) OR {If insertation space found}
+                (currSL^.Next = nil) then {or if end of list}
+            begin
+                {creation of element}
+                new(tmpSL);
+                tmpSL^.Next := currSL^.Next; {creation of connections }
+                currSL^.Next := tmpSL;
 
-      currSL := currSL^.next;
+                tmpSL^.Number := currDL^.Number;
+                tmpSL^.Name := currDL^.Name;
+                break; {move to Next element of Double List}
+            end;
+            currSL := currSL^.Next;
+        end;
+        currDL := currDL^.Next;
     end;
-
-    currDL := currDL^.next;
-  end;
 end;
 
 
-Procedure writeList(head: ptrSL; var output: text);
+procedure writeListInFile(head: SingleLinkedList; var output: Text);
 begin
-  head:=head^.next; {skip of empty head}
-  while (head <> nil) do
+    head := head^.Next; {skip of empty head}
+
+    while (head <> nil) do
     begin
-      writeln(output, head^.number, head^.name);
-      head:=head^.next;
+        writeln(output, head^.Number, head^.Name);
+        head := head^.Next;
     end;
-  writeln(output);
+
+    writeln(output);
 end;
 
+var
+    headDList  : DoubleLinkedList; { pointer to head of Double List }
+    headName   : SingleLinkedList; { pointer to heads of single Lists sorted by Name and Number}
+    headNumber : SingleLinkedList;
+    input      : Text            ;
+    output     : Text            ;
 
 begin
   assign(input, 'input.txt');
   reset(input);
 
-  P1(headDL,input); {Create double List from input text file }
+  P1(headDL,input);             {Create double List from input text file }
   close(input);
 
   assign(output, 'output.txt');
   rewrite(output);
 
-  P2(headDL, true, output); {Write double List in straight order }
-  P2(headDL, false, output); {Write double List in inverse order}
+  P2(headDL, true, output);     {Write double List in straight order }
+  P2(headDL, false, output);    {Write double List in inverse order}
 
   P3(headDL, headName, headNumber); {Creation of two sorted Single Lists}
-  writeList(headNumber, output);  {Write single list sorted by Number}
-  writeList(headName, output);  {Write single list sorted by Name}
+  WriteList(headNumber, output);    {Write single list sorted by Number}
+  WriteList(headName,   output);    {Write single list sorted by Name}
 
 
   close(output);
