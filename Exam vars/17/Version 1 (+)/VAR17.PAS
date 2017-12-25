@@ -117,10 +117,10 @@ begin
   assign(input2, 'input2.txt');
   reset(input2);
 
-  assign(tFile1, 'typeFile1.txt');
+  assign(tFile1, 'tFile1.txt');
   rewrite(tFile1);
 
-  assign(tFile2, 'typeFile2.txt');
+  assign(tFile2, 'tFile2.txt');
   rewrite(tFile2);
 
   assign(output, 'output.txt');
