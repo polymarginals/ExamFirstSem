@@ -1,18 +1,20 @@
 procedure SortList(var BooksHead: PTBook);
 var
-    BooksI, BooksJ: PTBook;
-    PrevI, PrevJ: PTBook;
-    TempBook: PTBook;
+    BooksI   : PTBook;
+    BooksJ   : PTBook;
+    PrevI    : PTBook;
+    PrevJ    : PTBook;
+    TempBook : PTBook;
 
 begin
     BooksI := BooksHead;
-    PrevI := BooksI;
+    PrevI  := BooksI;
 
     while BooksI^.SortedNext <> nil do
     begin
         BooksI := BooksI^.SortedNext;
         BooksJ := BooksI;
-        PrevJ := BooksI;
+        PrevJ  := BooksI;
 
         while BooksJ^.SortedNext <> nil do
         begin
@@ -22,21 +24,23 @@ begin
             begin
                 if BooksI^.SortedNext = BooksJ then
                 begin
-                    PrevI^.SortedNext  := BooksJ;
+                    PrevI ^.SortedNext := BooksJ;
                     BooksI^.SortedNext := BooksJ^.SortedNext;
                     BooksJ^.SortedNext := BooksI;
                 end
                 else
                 begin
-                    PrevI^.SortedNext := BooksJ;
-                    PrevJ^.SortedNext := BooksI;
-                    TempBook := BooksJ^.SortedNext;
+                    PrevI^.SortedNext  := BooksJ;
+                    PrevJ^.SortedNext  := BooksI;
+
+                    TempBook           := BooksJ^.SortedNext;
+
                     BooksJ^.SortedNext := BooksI^.SortedNext;
                     BooksI^.SortedNext := TempBook;
                 end;
                 TempBook := BooksI;
-                BooksI := BooksJ;
-                BooksJ := TempBook;
+                BooksI   := BooksJ;
+                BooksJ   := TempBook;
             end;
 
             PrevJ := BooksJ;
