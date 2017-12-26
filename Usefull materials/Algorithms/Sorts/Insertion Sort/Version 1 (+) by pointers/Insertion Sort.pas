@@ -85,7 +85,7 @@ type
     end;
 
     { procedure to sort a singly linked list using insertion sort }
-    function List_InsertionSortByPointers(var head: PTList) : PTList;
+    procedure List_InsertionSortByPointers(var head: PTList);
     var
         sorted   : PTList;
         current  : PTList;
@@ -125,7 +125,7 @@ begin
     List_Print(outp, list);
 
     WriteLn(outp);
-    listSorted := List_InsertionSortByPointers(list);
+    List_InsertionSortByPointers(list);
     List_Print(outp, listSorted);
 
     Close(inp);
