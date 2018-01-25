@@ -39,12 +39,11 @@ begin
         search:=search^.next;
       end;
   end;
-  tmp^.next:=nil;
 end;
 
 Procedure P2(var head: ptr);
 var
-  tmp1 {Текущий элемент} ,tmp2 {Предшествующий элемент}: ptr;
+  tmp1 {Г’ГҐГЄГіГ№ГЁГ© ГЅГ«ГҐГ¬ГҐГ­ГІ} ,tmp2 {ГЏГ°ГҐГ¤ГёГҐГ±ГІГўГіГѕГ№ГЁГ© ГЅГ«ГҐГ¬ГҐГ­ГІ}: ptr;
 begin
   tmp1:=head;
   while tmp1^.f = 0 do
